@@ -1,4 +1,4 @@
-package com.flowable.spring;
+package com.springflowable.flowablespring.service;
 
 import org.flowable.engine.*;
 import org.flowable.engine.history.HistoricActivityInstance;
@@ -23,18 +23,6 @@ public class ProcessService {
     private TaskService taskService;
     @Autowired
     private HistoryService historyService;
-
-    public ProcessService() {
-        /*
-        ProcessEngineConfiguration conf = new StandaloneProcessEngineConfiguration()
-                .setJdbcUrl("jdbc:h2:mem:flowable;DB_CLOSE_DELAY=-1")
-                .setJdbcUsername("sa")
-                .setJdbcPassword("")
-                .setJdbcDriver("org.h2.Driver")
-                .setDatabaseSchemaUpdate(ProcessEngineConfiguration.DB_SCHEMA_UPDATE_TRUE);
-        processEngine = conf.buildProcessEngine();  //Starting point
-         */
-    }
 
     public Deployment createDeployment(String procDefFileName){
         return repositoryService.createDeployment()

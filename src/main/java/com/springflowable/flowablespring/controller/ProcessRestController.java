@@ -1,7 +1,8 @@
-package com.flowable.spring;
+package com.springflowable.flowablespring.controller;
 
-import com.flowable.process.HolidayBookProcess;
-import com.flowable.process.UserInteraction;
+import com.springflowable.flowablespring.process.HolidayBookProcess;
+import com.springflowable.flowablespring.process.UserInteraction;
+import com.springflowable.flowablespring.service.ProcessService;
 import org.flowable.engine.history.HistoricActivityInstance;
 import org.flowable.engine.repository.Deployment;
 import org.flowable.engine.repository.ProcessDefinition;
@@ -22,27 +23,26 @@ public class ProcessRestController {
 
     @GetMapping("/")
     public void startProcess(){
-        com.flowable.standalone.ProcessService ps = new com.flowable.standalone.ProcessService();
         UserInteraction pp = new UserInteraction();
         HolidayBookProcess hbp = new HolidayBookProcess(pp);
 
-        Deployment deploy = ps.createDeployment("processes/holiday-request.bpmn");
-        ProcessDefinition processDefinition = ps.getProcessDefinition(deploy.getId());
+        Deployment deploy = processService.createDeployment("processes/holiday-request.bpmn");
+        ProcessDefinition processDefinition = processService.getProcessDefinition(deploy.getId());
         System.out.println(processDefinition.getName());
 
         Map<String, Object> userInput = hbp.scanUserVariables();
-        ProcessInstance holidayRequest = ps.startProcessInstance("holidayRequest", userInput);
+        ProcessInstance holidayRequest = processService.startProcessInstance("holidayRequest", userInput);
         System.out.println(holidayRequest.getName());
 
-        List<Task> tasks = ps.getTasksForCandidateGroup("managers");
+        List<Task> tasks = processService.getTasksForCandidateGroup("managers");
         hbp.printTasks(tasks);
         String taskId = hbp.chooseTaskAndReturnId(tasks);
-        Map<String,Object> taskVars = ps.getTaskVariables(taskId);
+        Map<String,Object> taskVars = processService.getTaskVariables(taskId);
         hbp.presentRequest(taskVars);
         Map<String, Object> approvalParams = hbp.presentApprovalQuestion();
-        ps.completeTask(taskId, approvalParams);
+        processService.completeTask(taskId, approvalParams);
 
-        List<HistoricActivityInstance> finishedTasks = ps.getFinishedHistoricTasks(holidayRequest.getId());
+        List<HistoricActivityInstance> finishedTasks = processService.getFinishedHistoricTasks(holidayRequest.getId());
         hbp.presentFinishedHistoricTasks(finishedTasks);
     }
 }
